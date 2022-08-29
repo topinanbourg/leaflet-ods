@@ -13,10 +13,10 @@
 
 ## Deployment
 
-Déployé sur [https://ds-tst.vercel.app](ods-tst.vercel.app)
+Déployé sur [ods-tst.vercel.app](https://ods-tst.vercel.app)
 
 ## cf
 
--   [https://data.opendatasoft.com/explore/dataset/bureaux-vote-france-2017%40public/api/](OpenDataSoft dataset)
--   [https://react-leaflet.js.org/](React Leaflet)
--   [https://www.liedman.net/leaflet-routing-machine/](leaflet-routing)
+-   [OpenDataSoft dataset](https://data.opendatasoft.com/explore/dataset/bureaux-vote-france-2017%40public/api/)
+-   [React Leaflet](https://react-leaflet.js.org/)
+-   [leaflet-routing](https://www.liedman.net/leaflet-routing-machine/)
