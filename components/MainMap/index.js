@@ -10,7 +10,6 @@ import CustomControls from './CustomControls';
 import "leaflet-routing-machine";
 import L from "leaflet";
 
-// https://data.opendatasoft.com/api/records/1.0/search/?dataset=bureaux-vote-france-2017%40public&q=&facet=code_insee&facet=code_bureau_vote&facet=ouverture&facet=fermeture&facet=ville&facet=nom_bureau_vote&facet=departement&geofilter.distance=48.47186888804821%2C+2.700778971783497%2C1000
 const fetcher = (...args) => fetch(...args).then(response => response.json());
 
 function distance(p1, p2) {
@@ -64,7 +63,7 @@ function MainMap() {
           styles: [{ color: "#00C7B1", weight: 3 }]
         },
         show: true,
-        waypoints: [startPoint, nearestOffice ?? selectedOffice], // Point A - Point B
+        waypoints: [startPoint, nearestOffice ?? selectedOffice],
         fitSelectedRoutes: false,
         routeWhileDragging: true,
       })
