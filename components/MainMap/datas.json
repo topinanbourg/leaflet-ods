@@ -1,0 +1,231 @@
+{
+    "nhits": 4,
+    "parameters": {
+        "dataset": ["bureaux-vote-france-2017@public"],
+        "rows": 10,
+        "start": 0,
+        "facet": [
+            "code_insee",
+            "code_bureau_vote",
+            "ouverture",
+            "fermeture",
+            "ville",
+            "nom_bureau_vote",
+            "departement"
+        ],
+        "format": "json",
+        "geofilter.distance": ["48.47186888804821, 2.700778971783497,1000"],
+        "timezone": "UTC"
+    },
+    "records": [
+        {
+            "datasetid": "bureaux-vote-france-2017@public",
+            "recordid": "648fd3bcccde57f76d361861a5a53a955210a8df",
+            "fields": {
+                "coordonnees": [48.470887, 2.700192],
+                "uniq_bdv": "École primaire Olivier Metra - Bois-le-Roi",
+                "code_postal": "77590",
+                "adresse": "Rue de Verdun",
+                "code_bureau_vote": "0003",
+                "nom_bureau_vote": "École primaire Olivier Metra",
+                "code_insee": "77037",
+                "fermeture": "19",
+                "ville": "Bois-le-Roi",
+                "bureau_vote": "Bureau de vote n°3",
+                "ouverture": "8",
+                "adresse_subs": "Rue de Verdun",
+                "departement": "77",
+                "dist": "117.44778650912065"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [2.700192, 48.470887]
+            },
+            "record_timestamp": "2017-05-05T08:18:01.994Z"
+        },
+        {
+            "datasetid": "bureaux-vote-france-2017@public",
+            "recordid": "2218ec9c6df23c8a45f40aa0a33aff80d515c854",
+            "fields": {
+                "coordonnees": [48.470887, 2.700192],
+                "uniq_bdv": "École primaire Olivier Metra - Bois-le-Roi",
+                "code_postal": "77590",
+                "adresse": "Rue de Verdun",
+                "code_bureau_vote": "0004",
+                "nom_bureau_vote": "École primaire Olivier Metra",
+                "code_insee": "77037",
+                "fermeture": "19",
+                "ville": "Bois-le-Roi",
+                "bureau_vote": "Bureau de vote n°4",
+                "ouverture": "8",
+                "adresse_subs": "Rue de Verdun",
+                "departement": "77",
+                "dist": "117.44778650912065"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [2.700192, 48.470887]
+            },
+            "record_timestamp": "2017-05-05T08:18:01.994Z"
+        },
+        {
+            "datasetid": "bureaux-vote-france-2017@public",
+            "recordid": "b6f30d5592a5e6ed48d2753905988f59d197f610",
+            "fields": {
+                "coordonnees": [48.47396, 2.697884],
+                "uniq_bdv": "École primaire les Viarons - Bois-le-Roi",
+                "code_postal": "77590",
+                "adresse": "Rue du Clos de la Cure",
+                "code_bureau_vote": "0002",
+                "nom_bureau_vote": "École primaire les Viarons",
+                "code_insee": "77037",
+                "fermeture": "19",
+                "ville": "Bois-le-Roi",
+                "bureau_vote": "Bureau de vote n°2",
+                "ouverture": "8",
+                "adresse_subs": "Rue du Clos de la Cure",
+                "departement": "77",
+                "dist": "315.61670619754824"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [2.697884, 48.47396]
+            },
+            "record_timestamp": "2017-05-05T08:18:01.994Z"
+        },
+        {
+            "datasetid": "bureaux-vote-france-2017@public",
+            "recordid": "d831b4656c3150e6e01e8d4505d82d1db71dfc59",
+            "fields": {
+                "coordonnees": [48.47595, 2.693678],
+                "uniq_bdv": "Mairie - salle des mariages - Bois-le-Roi",
+                "code_postal": "77590",
+                "adresse": "4 avenue Paul Doumer",
+                "code_bureau_vote": "0001",
+                "nom_bureau_vote": "Mairie - salle des mariages",
+                "code_insee": "77037",
+                "fermeture": "19",
+                "ville": "Bois-le-Roi",
+                "bureau_vote": "Bureau de vote n°1",
+                "ouverture": "8",
+                "adresse_subs": "4 avenue Paul Doumer",
+                "departement": "77",
+                "dist": "692.7869590573114"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [2.693678, 48.47595]
+            },
+            "record_timestamp": "2017-05-05T08:18:01.994Z"
+        }
+    ],
+    "facet_groups": [
+        {
+            "name": "code_insee",
+            "facets": [
+                {
+                    "name": "77037",
+                    "count": 4,
+                    "state": "displayed",
+                    "path": "77037"
+                }
+            ]
+        },
+        {
+            "name": "code_bureau_vote",
+            "facets": [
+                {
+                    "name": "0001",
+                    "count": 1,
+                    "state": "displayed",
+                    "path": "0001"
+                },
+                {
+                    "name": "0002",
+                    "count": 1,
+                    "state": "displayed",
+                    "path": "0002"
+                },
+                {
+                    "name": "0003",
+                    "count": 1,
+                    "state": "displayed",
+                    "path": "0003"
+                },
+                {
+                    "name": "0004",
+                    "count": 1,
+                    "state": "displayed",
+                    "path": "0004"
+                }
+            ]
+        },
+        {
+            "name": "ouverture",
+            "facets": [
+                {
+                    "name": "8",
+                    "count": 4,
+                    "state": "displayed",
+                    "path": "8"
+                }
+            ]
+        },
+        {
+            "name": "fermeture",
+            "facets": [
+                {
+                    "name": "19",
+                    "count": 4,
+                    "state": "displayed",
+                    "path": "19"
+                }
+            ]
+        },
+        {
+            "name": "ville",
+            "facets": [
+                {
+                    "name": "Bois-le-Roi",
+                    "count": 4,
+                    "state": "displayed",
+                    "path": "Bois-le-Roi"
+                }
+            ]
+        },
+        {
+            "name": "nom_bureau_vote",
+            "facets": [
+                {
+                    "name": "École primaire Olivier Metra",
+                    "count": 2,
+                    "state": "displayed",
+                    "path": "École primaire Olivier Metra"
+                },
+                {
+                    "name": "Mairie - salle des mariages",
+                    "count": 1,
+                    "state": "displayed",
+                    "path": "Mairie - salle des mariages"
+                },
+                {
+                    "name": "École primaire les Viarons",
+                    "count": 1,
+                    "state": "displayed",
+                    "path": "École primaire les Viarons"
+                }
+            ]
+        },
+        {
+            "name": "departement",
+            "facets": [
+                {
+                    "name": "77",
+                    "count": 4,
+                    "state": "displayed",
+                    "path": "77"
+                }
+            ]
+        }
+    ]
+}
