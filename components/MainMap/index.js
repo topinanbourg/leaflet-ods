@@ -1,7 +1,7 @@
 import './MainMap.module.css';
 import React, { useState, useRef, useEffect } from "react";
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents, ZoomControl } from 'react-leaflet';
-import voteOffices from "./datas.json";
+import { MapContainer, TileLayer, Marker, Popup, Circle } from 'react-leaflet';
+//import voteOffices from "./datas.json";
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
 import "leaflet-defaulticon-compatibility";
@@ -30,14 +30,27 @@ function MainMap() {
   const [selectedOffice, setSelectedOffice] = useState(null);
   const [nearestOffice, setNearestOffice] = useState(null);
   const [mapCenter, setCenter] = useState([48.47186888804821, 2.700778971783497]);
-  const [startPoint, setStartPoint] = useState(homePosition);
-  const mapZoom = 16;
+  const [startPoint, setStartPoint] = useState({ lat: homePosition[0], lng: homePosition[1] });
+  const mapZoom = 15;
+
+  const [radius, setRadius] = useState(1500);
+  const url = `https://data.opendatasoft.com/api/records/1.0/search/?dataset=bureaux-vote-france-2017%40public&facet=nom_bureau_vote&geofilter.distance=${startPoint.lat}%2C${startPoint.lng}%2C${radius}`;
+  const { data, error, mutate } = useSwr(url, { fetcher });
+  const voteOffices = data && !error ? data : [];
+  const [filteredReults, setFilteredResults] = useState([]);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [needPath, setNeedPath] = useState(true);
 
   const onClick = (center) => {
     setStartPoint(center);
-    setNearestOffice(voteOffices.records.reduce((a, b) => distance(center, a) < distance(center, b) ? a : b));
     setSelectedOffice(null);
+    setIsLoaded(false);
+    setNeedPath(true);
   }
+  // after start point change
+  useEffect(() => {
+    mutate();
+  }, [startPoint])
 
   // Create the routing-machine instance:
   useEffect(() => {
@@ -48,21 +61,41 @@ function MainMap() {
       RoutingMachineRef.current = L.Routing.control({
         position: 'topleft', // Where to position control on map
         lineOptions: { // Options for the routing line
-          styles: [{ color: "#EC6FA1", weight: 3 }]
+          styles: [{ color: "#00C7B1", weight: 3 }]
         },
         show: true,
         waypoints: [startPoint, nearestOffice ?? selectedOffice], // Point A - Point B
-        fitSelectedRoutes: false, routeWhileDragging: true,
-
+        fitSelectedRoutes: false,
+        routeWhileDragging: true,
       })
+
+      RoutingMachineRef.current.on('routesfound', function (e) {
+        //console.log(e);
+        setNeedPath(false);
+      });
       // Save instance to state:
       setRoutingMachine(RoutingMachineRef.current)
     }
   }, [map])
 
+
+  // after a reload of spot near center
+  useEffect(() => {
+    if (!voteOffices.records) return;
+    setFilteredResults(voteOffices.records);
+    setIsLoaded(true);
+  }, [voteOffices])
+
+  useEffect(() => {
+    if (filteredReults.length == 0) return;
+    const nearestOffice = filteredReults.reduce((a, b) => distance(startPoint, a) < distance(startPoint, b) ? a : b);
+    setNearestOffice(nearestOffice);
+    setSelectedOffice(nearestOffice);
+  }, [filteredReults])
+
   // change strating point of the route
   useEffect(() => {
-    if (!routingMachine) return
+    if (!routingMachine || !RoutingMachineRef.current) return
     if (!nearestOffice && !selectedOffice) {
       return
     }
@@ -71,7 +104,7 @@ function MainMap() {
       endPoint = endPoint.fields.coordonnees;
     }
 
-    RoutingMachineRef.current && RoutingMachineRef.current.setWaypoints([startPoint, endPoint]);
+    RoutingMachineRef.current.setWaypoints([startPoint, endPoint]);
   }, [startPoint, selectedOffice, nearestOffice, routingMachine])
 
   // Once routing machine instance is ready, add to map:
@@ -87,7 +120,7 @@ function MainMap() {
     <MapContainer
       center={mapCenter}
       zoom={mapZoom}
-      scrollWheelZoom={false}
+      scrollWheelZoom={true}
       zoomControl={false}
       // Set the map instance to state when ready:
       whenCreated={map => setMap(map)}
@@ -96,7 +129,7 @@ function MainMap() {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
       />
-      {voteOffices.records && voteOffices.records.map(voteOffice => (
+      {filteredReults.length && filteredReults.map(voteOffice => (
         <Marker
           key={voteOffice.recordid}
           position={[
@@ -130,12 +163,12 @@ function MainMap() {
       )}
 
       <Marker position={homePosition} draggable={false} key="home">
-        <Popup>Hey ! I live here</Popup>
+        <Popup>Hey ! JosNo live here :P</Popup>
       </Marker>
 
-      <Marker position={startPoint} draggable={true} animate={true} key="startPoint">
-
-      </Marker>
+      <Marker position={startPoint} draggable={true} animate={true} key="startPoint" />
+      {!isLoaded && (<Circle center={startPoint} radius={radius} color="#00C7B1" weight={3} opacity={0.3} />)}
+      {isLoaded && needPath && (<Circle center={startPoint} radius={radius} color="#EC6FA1" weight={3} opacity={0.3} />)}
 
       <CustomControls onClick={onClick} />
     </MapContainer>
