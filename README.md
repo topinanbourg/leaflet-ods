@@ -1,5 +1,7 @@
 # ODS & Leaflet tests
 
+![ODS & Leaflet](/public/repository-open-graph.png?raw=true "ODS & Leaflet tests")
+
 -   Liste les bureaux de votes proche d'un point sur la carte (fetch ODS)
 -   rechagement des bureau de vote proches du click
 -   recheche du plus proche
