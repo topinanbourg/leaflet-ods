@@ -25,29 +25,48 @@ function MainMap() {
   // Ref for our routing machine instace:
   const RoutingMachineRef = useRef(null)
 
+  // some point of interests
   const homePosition = [48.46475702683352, 2.6968766862658895];
+  const churchPosition = [48.47186888804821, 2.700778971783497];
+
+  // selected and nearest spot
   const [selectedOffice, setSelectedOffice] = useState(null);
   const [nearestOffice, setNearestOffice] = useState(null);
-  const [mapCenter, setCenter] = useState([48.47186888804821, 2.700778971783497]);
-  const [startPoint, setStartPoint] = useState({ lat: homePosition[0], lng: homePosition[1] });
-  const mapZoom = 15;
 
+  // where we will open the map
+  const [mapCenter, setCenter] = useState({ lat: churchPosition[0], lng: churchPosition[1] });
+  // starting point for first path
+  const [startPoint, setStartPoint] = useState({ lat: homePosition[0], lng: homePosition[1] });
+
+  // zoom level for init the map
+  const mapZoom = 15;
+  // radius in metter to fetch datas to display spot on the map
   const [radius, setRadius] = useState(1500);
+
+  // fetch data from the api
   const url = `https://data.opendatasoft.com/api/records/1.0/search/?dataset=bureaux-vote-france-2017%40public&facet=nom_bureau_vote&geofilter.distance=${startPoint.lat}%2C${startPoint.lng}%2C${radius}`;
   const { data, error, mutate } = useSwr(url, { fetcher });
   const voteOffices = data && !error ? data : [];
+
+  // set spot list (not all the API response)
   const [filteredReults, setFilteredResults] = useState([]);
+  // is the request to API pending ?
   const [isLoaded, setIsLoaded] = useState(false);
+  // do we need to search a new path ?
   const [needPath, setNeedPath] = useState(true);
 
+  // callback for when when click on the map
   const onClick = (center) => {
+    // set the new start point in the map
     setStartPoint(center);
+    // un select current spot
     setSelectedOffice(null);
     setIsLoaded(false);
     setNeedPath(true);
   }
   // after start point change
   useEffect(() => {
+    // launch an API request to get spot near to the new start point
     mutate();
   }, [startPoint])
 
@@ -55,42 +74,46 @@ function MainMap() {
   useEffect(() => {
     // Check For the map instance:
     if (!map) return
-    if (map) {
-      // Assign Control to React Ref:
-      RoutingMachineRef.current = L.Routing.control({
-        position: 'topleft', // Where to position control on map
-        lineOptions: { // Options for the routing line
-          styles: [{ color: "#00C7B1", weight: 3 }]
-        },
-        show: true,
-        waypoints: [startPoint, nearestOffice ?? selectedOffice],
-        fitSelectedRoutes: false,
-        routeWhileDragging: true,
-      })
+    // Assign Control to React Ref:
+    RoutingMachineRef.current = L.Routing.control({
+      // Where to position control on map
+      // (will be hidden by css)
+      position: 'topleft',
+      // Options for the routing line
+      lineOptions: {
+        styles: [{ color: "#00C7B1", weight: 3 }]
+      },
+      fitSelectedRoutes: false,
+      routeWhileDragging: true,
+      show: true,
+      // starting and destination point for the routing path
+      waypoints: [startPoint, nearestOffice ?? selectedOffice],
+    })
 
-      RoutingMachineRef.current.on('routesfound', function (e) {
-        //console.log(e);
-        setNeedPath(false);
-      });
-      // Save instance to state:
-      setRoutingMachine(RoutingMachineRef.current)
-    }
+    RoutingMachineRef.current.on('routesfound', function (e) {
+      setNeedPath(false);
+    });
+    // Save instance to state:
+    setRoutingMachine(RoutingMachineRef.current)
   }, [map])
 
+  // Once routing machine instance is ready, add to map:
+  useEffect(() => {
+    if (!routingMachine) return
+    routingMachine.addTo(map)
+  }, [routingMachine])
 
-  // after a reload of spot near center
+  // after a reload of spots near start point
   useEffect(() => {
     if (!voteOffices.records) return;
     setFilteredResults(voteOffices.records);
     setIsLoaded(true);
-  }, [voteOffices])
-
-  useEffect(() => {
-    if (filteredReults.length == 0) return;
-    const nearestOffice = filteredReults.reduce((a, b) => distance(startPoint, a) < distance(startPoint, b) ? a : b);
+    if (voteOffices.records.length == 0) return;
+    // set the nearest spot
+    const nearestOffice = voteOffices.records.reduce((a, b) => distance(startPoint, a) < distance(startPoint, b) ? a : b);
     setNearestOffice(nearestOffice);
     setSelectedOffice(nearestOffice);
-  }, [filteredReults])
+  }, [voteOffices])
 
   // change strating point of the route
   useEffect(() => {
@@ -102,17 +125,10 @@ function MainMap() {
     if (endPoint.fields) {
       endPoint = endPoint.fields.coordonnees;
     }
-
+    // set the new start and end points for the routing system
     RoutingMachineRef.current.setWaypoints([startPoint, endPoint]);
   }, [startPoint, selectedOffice, nearestOffice, routingMachine])
 
-  // Once routing machine instance is ready, add to map:
-  useEffect(() => {
-    if (!routingMachine) return
-    if (routingMachine) {
-      routingMachine.addTo(map)
-    }
-  }, [routingMachine])
 
 
   return (
