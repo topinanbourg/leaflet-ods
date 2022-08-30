@@ -9,11 +9,12 @@ import useSwr from "swr";
 import CustomControls from './CustomControls';
 import "leaflet-routing-machine";
 import L from "leaflet";
+import CustomSpot, { reducer } from '../CustomSpot';
 
 const fetcher = (...args) => fetch(...args).then(response => response.json());
 
 function euclideanDistance(p1, p2) {
-  const distance = Math.sqrt(Math.pow(p1.lat - p2.fields.coordonnees[0], 2) + Math.pow(p1.lng - p2.fields.coordonnees[1], 2))
+  const distance = Math.sqrt(Math.pow(p1.lat - p2.latlng[0], 2) + Math.pow(p1.lng - p2.latlng[1], 2))
   return distance;
 }
 
@@ -106,11 +107,14 @@ function MainMap() {
   // after a reload of spots near start point
   useEffect(() => {
     if (!spotsAvailables.records) return;
-    setFilteredResults(spotsAvailables.records);
+
+    const newFilteredResults = reducer(spotsAvailables.records);
+
+    setFilteredResults(newFilteredResults);
     setIsLoaded(true);
-    if (spotsAvailables.records.length == 0) return;
+    if (newFilteredResults.length == 0) return;
     // set the nearest spot
-    const nearestSpot = spotsAvailables.records.reduce((a, b) => euclideanDistance(startPoint, a) < euclideanDistance(startPoint, b) ? a : b);
+    const nearestSpot = newFilteredResults.reduce((a, b) => euclideanDistance(startPoint, a) < euclideanDistance(startPoint, b) ? a : b);
     setNearestSpot(nearestSpot);
     setSelectedSpot(nearestSpot);
   }, [spotsAvailables])
@@ -122,8 +126,8 @@ function MainMap() {
       return
     }
     let endPoint = nearestSpot ?? selectedSpot;
-    if (endPoint.fields) {
-      endPoint = endPoint.fields.coordonnees;
+    if (endPoint.latlng) {
+      endPoint = endPoint.latlng;
     }
     // set the new start and end points for the routing system
     RoutingMachineRef.current.setWaypoints([startPoint, endPoint]);
@@ -147,7 +151,7 @@ function MainMap() {
       {filteredReults.length && filteredReults.map(spot => (
         <Marker
           key={spot.recordid}
-          position={spot.fields.coordonnees}
+          position={spot.latlng}
           eventHandlers={{
             click: (e) => {
               setSelectedSpot(spot);
@@ -158,14 +162,7 @@ function MainMap() {
       ))}
 
       {selectedSpot && (
-        <Popup
-          position={selectedSpot.fields.coordonnees}
-        >
-          <div>
-            <h2>{selectedSpot.fields.bureau_vote}</h2>
-            <p>{selectedSpot.fields.nom_bureau_vote}</p>
-          </div>
-        </Popup>
+        <CustomSpot item={selectedSpot} />
       )}
 
       <Marker position={homePosition} draggable={false} key="home">
