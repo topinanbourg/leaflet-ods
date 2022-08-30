@@ -13,4 +13,13 @@ const VoteSpot = ({ item }) => {
         </Popup>
     );
 };
+
+const reducer = (record) => {
+    return {
+        latlng: record.fields.coordonnees
+        , ...record
+    };
+};
+
 export default VoteSpot;
+export { reducer };

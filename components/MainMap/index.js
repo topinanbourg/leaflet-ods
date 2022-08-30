@@ -44,8 +44,23 @@ function MainMap() {
   // radius in metter to fetch datas to display spot on the map
   const [radius, setRadius] = useState(1500);
 
+  // list of availables dataset to overlay on the map
+  const availablesDatasets = [
+    {
+      name: "Boîtes aux lettres de rue",
+      datasetid: "laposte_boiterue@datanova",
+    },
+    {
+      name: "Bureaux de vote",
+      datasetid: "bureaux-vote-france-2017@public",
+    },
+  ];
+
+  // witch dataset we will use to display spots on the map
+  const [dataset, setDataset] = useState(availablesDatasets[0]);
+
   // fetch data from the api
-  const url = `https://data.opendatasoft.com/api/records/1.0/search/?dataset=bureaux-vote-france-2017%40public&facet=nom_bureau_vote&geofilter.distance=${startPoint.lat}%2C${startPoint.lng}%2C${radius}`;
+  const url = `https://data.opendatasoft.com/api/records/1.0/search/?dataset=${dataset.datasetid}&geofilter.distance=${startPoint.lat}%2C${startPoint.lng}%2C${radius}`;
   const { data, error, mutate } = useSwr(url, { fetcher });
   const spotsAvailables = data && !error ? data : [];
 
@@ -56,6 +71,11 @@ function MainMap() {
   // do we need to search a new path ?
   const [needPath, setNeedPath] = useState(true);
 
+  // callback for when we select an another dataset
+  const onDatasetChange = (datasetid) => {
+    setDataset(availablesDatasets.find(dataset => dataset.datasetid === datasetid));
+  }
+
   // callback for when when click on the map
   const onClick = (center) => {
     // set the new start point in the map
@@ -65,11 +85,11 @@ function MainMap() {
     setIsLoaded(false);
     setNeedPath(true);
   }
-  // after start point change
+  // after start point change or a dataset change, we need to fetch new data
   useEffect(() => {
     // launch an API request to get spot near to the new start point
     mutate();
-  }, [startPoint])
+  }, [startPoint, dataset])
 
   // Create the routing-machine instance:
   useEffect(() => {
@@ -173,7 +193,7 @@ function MainMap() {
       {!isLoaded && (<Circle center={startPoint} radius={radius} color="#00C7B1" weight={3} opacity={0.3} />)}
       {isLoaded && needPath && (<Circle center={startPoint} radius={radius} color="#EC6FA1" weight={3} opacity={0.3} />)}
 
-      <CustomControls onClick={onClick} />
+      <CustomControls onClick={onClick} availablesDatasets={availablesDatasets} onDatasetChange={onDatasetChange} />
     </MapContainer>
   );
 }
