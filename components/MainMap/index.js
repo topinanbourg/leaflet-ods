@@ -12,9 +12,9 @@ import L from "leaflet";
 
 const fetcher = (...args) => fetch(...args).then(response => response.json());
 
-function distance(p1, p2) {
-  const dst = Math.sqrt(Math.pow(p1.lat - p2.fields.coordonnees[0], 2) + Math.pow(p1.lng - p2.fields.coordonnees[1], 2))
-  return dst;
+function euclideanDistance(p1, p2) {
+  const distance = Math.sqrt(Math.pow(p1.lat - p2.fields.coordonnees[0], 2) + Math.pow(p1.lng - p2.fields.coordonnees[1], 2))
+  return distance;
 }
 
 function MainMap() {
@@ -110,7 +110,7 @@ function MainMap() {
     setIsLoaded(true);
     if (voteOffices.records.length == 0) return;
     // set the nearest spot
-    const nearestOffice = voteOffices.records.reduce((a, b) => distance(startPoint, a) < distance(startPoint, b) ? a : b);
+    const nearestOffice = voteOffices.records.reduce((a, b) => euclideanDistance(startPoint, a) < euclideanDistance(startPoint, b) ? a : b);
     setNearestOffice(nearestOffice);
     setSelectedOffice(nearestOffice);
   }, [voteOffices])
