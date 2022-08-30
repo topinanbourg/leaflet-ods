@@ -1,7 +1,7 @@
 import './MainMap.module.css';
 import React, { useState, useRef, useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Circle } from 'react-leaflet';
-//import voteOffices from "./datas.json";
+//import spotsAvailables from "./datas.json";
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
 import "leaflet-defaulticon-compatibility";
@@ -30,8 +30,8 @@ function MainMap() {
   const churchPosition = [48.47186888804821, 2.700778971783497];
 
   // selected and nearest spot
-  const [selectedOffice, setSelectedOffice] = useState(null);
-  const [nearestOffice, setNearestOffice] = useState(null);
+  const [selectedSpot, setSelectedSpot] = useState(null);
+  const [nearestSpot, setNearestSpot] = useState(null);
 
   // where we will open the map
   const [mapCenter, setCenter] = useState({ lat: churchPosition[0], lng: churchPosition[1] });
@@ -46,7 +46,7 @@ function MainMap() {
   // fetch data from the api
   const url = `https://data.opendatasoft.com/api/records/1.0/search/?dataset=bureaux-vote-france-2017%40public&facet=nom_bureau_vote&geofilter.distance=${startPoint.lat}%2C${startPoint.lng}%2C${radius}`;
   const { data, error, mutate } = useSwr(url, { fetcher });
-  const voteOffices = data && !error ? data : [];
+  const spotsAvailables = data && !error ? data : [];
 
   // set spot list (not all the API response)
   const [filteredReults, setFilteredResults] = useState([]);
@@ -60,7 +60,7 @@ function MainMap() {
     // set the new start point in the map
     setStartPoint(center);
     // un select current spot
-    setSelectedOffice(null);
+    setSelectedSpot(null);
     setIsLoaded(false);
     setNeedPath(true);
   }
@@ -87,7 +87,7 @@ function MainMap() {
       routeWhileDragging: true,
       show: true,
       // starting and destination point for the routing path
-      waypoints: [startPoint, nearestOffice ?? selectedOffice],
+      waypoints: [startPoint, nearestSpot ?? selectedSpot],
     })
 
     RoutingMachineRef.current.on('routesfound', function (e) {
@@ -105,29 +105,29 @@ function MainMap() {
 
   // after a reload of spots near start point
   useEffect(() => {
-    if (!voteOffices.records) return;
-    setFilteredResults(voteOffices.records);
+    if (!spotsAvailables.records) return;
+    setFilteredResults(spotsAvailables.records);
     setIsLoaded(true);
-    if (voteOffices.records.length == 0) return;
+    if (spotsAvailables.records.length == 0) return;
     // set the nearest spot
-    const nearestOffice = voteOffices.records.reduce((a, b) => euclideanDistance(startPoint, a) < euclideanDistance(startPoint, b) ? a : b);
-    setNearestOffice(nearestOffice);
-    setSelectedOffice(nearestOffice);
-  }, [voteOffices])
+    const nearestSpot = spotsAvailables.records.reduce((a, b) => euclideanDistance(startPoint, a) < euclideanDistance(startPoint, b) ? a : b);
+    setNearestSpot(nearestSpot);
+    setSelectedSpot(nearestSpot);
+  }, [spotsAvailables])
 
   // change strating point of the route
   useEffect(() => {
     if (!routingMachine || !RoutingMachineRef.current) return
-    if (!nearestOffice && !selectedOffice) {
+    if (!nearestSpot && !selectedSpot) {
       return
     }
-    let endPoint = nearestOffice ?? selectedOffice;
+    let endPoint = nearestSpot ?? selectedSpot;
     if (endPoint.fields) {
       endPoint = endPoint.fields.coordonnees;
     }
     // set the new start and end points for the routing system
     RoutingMachineRef.current.setWaypoints([startPoint, endPoint]);
-  }, [startPoint, selectedOffice, nearestOffice, routingMachine])
+  }, [startPoint, selectedSpot, nearestSpot, routingMachine])
 
 
 
@@ -144,26 +144,26 @@ function MainMap() {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
       />
-      {filteredReults.length && filteredReults.map(voteOffice => (
+      {filteredReults.length && filteredReults.map(spot => (
         <Marker
-          key={voteOffice.recordid}
-          position={voteOffice.fields.coordonnees}
+          key={spot.recordid}
+          position={spot.fields.coordonnees}
           eventHandlers={{
             click: (e) => {
-              setSelectedOffice(voteOffice);
-              setNearestOffice(null);
+              setSelectedSpot(spot);
+              setNearestSpot(null);
             },
           }}
         />
       ))}
 
-      {selectedOffice && (
+      {selectedSpot && (
         <Popup
-          position={selectedOffice.fields.coordonnees}
+          position={selectedSpot.fields.coordonnees}
         >
           <div>
-            <h2>{selectedOffice.fields.bureau_vote}</h2>
-            <p>{selectedOffice.fields.nom_bureau_vote}</p>
+            <h2>{selectedSpot.fields.bureau_vote}</h2>
+            <p>{selectedSpot.fields.nom_bureau_vote}</p>
           </div>
         </Popup>
       )}
