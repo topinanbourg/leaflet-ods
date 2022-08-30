@@ -147,10 +147,7 @@ function MainMap() {
       {filteredReults.length && filteredReults.map(voteOffice => (
         <Marker
           key={voteOffice.recordid}
-          position={[
-            voteOffice.fields.coordonnees[0],
-            voteOffice.fields.coordonnees[1]
-          ]}
+          position={voteOffice.fields.coordonnees}
           eventHandlers={{
             click: (e) => {
               setSelectedOffice(voteOffice);
@@ -162,13 +159,7 @@ function MainMap() {
 
       {selectedOffice && (
         <Popup
-          position={[
-            selectedOffice.geometry.coordinates[1],
-            selectedOffice.geometry.coordinates[0]
-          ]}
-          onClose={() => {
-            //setSelectedOffice(null);
-          }}
+          position={selectedOffice.fields.coordonnees}
         >
           <div>
             <h2>{selectedOffice.fields.bureau_vote}</h2>
