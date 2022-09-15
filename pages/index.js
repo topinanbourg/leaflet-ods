@@ -11,8 +11,8 @@ export default function Home() {
   return (
     <div className={styles.container}>
       <Head>
-        <title>ODS &amp; Leaflet</title>
-        <meta name="description" content="ODS &amp; Leaflet tests" />
+        <title>Leaflet &amp; ODS</title>
+        <meta name="description" content="Leaflet &amp; ODS tests" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <MapWithNoSSR />

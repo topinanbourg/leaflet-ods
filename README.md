@@ -1,6 +1,6 @@
-# ODS & Leaflet tests
+# Leaflet & ODS tests
 
-![ODS & Leaflet](/public/repository-open-graph.png?raw=true "ODS & Leaflet tests")
+![Leaflet & ODS](/public/repository-open-graph.png?raw=true "Leaflet & ODS tests")
 
 -   Liste des spots proches d'un point sur la carte (fetch ODS)
 -   rechagement des spots proches du click
@@ -24,7 +24,7 @@ Les points (ou "spots") seront choisis en haut à droite parmis :
 
 ## Deployment
 
-Déployé sur [ods-tst.vercel.app](https://ods-tst.vercel.app)
+Déployé sur [leaflet-ods.vercel.app](https://leaflet-ods.vercel.app)
 
 ## cf
 
